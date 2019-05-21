@@ -1,8 +1,5 @@
 var restify = require('restify');
-
 var builder = require('botbuilder');
-
-
 
 //Create global variables
 var ShowType = "";
@@ -38,40 +35,47 @@ server.post('/api/messages', connector.listen());
 
 // Service dialog
 var bot = new builder.UniversalBot(connector, [
-//Initial welcome
+    //Initial welcome
     function (session) {
-            // A Card's Submit Action obj for reservation was received
-            if (session.message && session.message.value) {
+        // A Card's Submit Action obj for reservation was received
+        if (session.message && session.message.value) {
             //Call the processSubmitAction Function to process reservation
-                    processSubmitAction(session, session.message.value);
-                    return;
-            }
-
-            //ITERATE STATES-ACTION
-            session.send("Welcome! This is the new Movies and Series recommendation service. Let me ask you a few questions.");
-            builder.Prompts.text(session, "Which show type would you like to watch? Please select either 'Movie' or 'Series'");
+            processSubmitAction(session, session.message.value);
+            return;
+        }
+        //ITERATE STATES-ACTION
+        session.send("Welcome! This is the new Movies and Series recommendation service. Let me ask you a few questions.");
+        builder.Prompts.text(session, "Which show type would you like to watch? Please select either 'Movie' or 'Series'");
         
     },
     function (session, results) {
-    ShowType = results.response.toLowerCase(); session.send("Perfect. Let's move on with the next question.");
-    builder.Prompts.text(session, "Which genre are you interested in?");
+        ShowType = results.response.toLowerCase();
+        session.send("Perfect. Let's move on with the next question.");
+        builder.Prompts.text(session, "Which genre are you interested in?");
     },
     function (session, results) {
-        Genre = results.response.toLowerCase(); session.send("Good. Let me ask you a final question.");
+        Genre = results.response.toLowerCase();
+        session.send("Good. Let me ask you a final question.");
         builder.Prompts.text(session, "In which language do you want to hear the show?");
     },
     function (session, results) {
         Language = results.response.toLowerCase();
-        var userCharacteristics = ShowType + Genre + Language; var showFound = false;
+        var userCharacteristics = ShowType + Genre + Language; 
+        var showFound = false;
         for (i=0; i<characteristics.length; i++){
-            if (userCharacteristics == characteristics[i]){ showFound = true;
-                session.send("Good. I have found a show that meets your criteria."); session.send("You can purchase it if you like: " + "***" + shows[i] + "***");
-                bot.dialog(shows[i], require('./'+shows[i])); session.beginDialog(shows[i]);
+            if (userCharacteristics == characteristics[i]){
+                showFound = true;
+                session.send("Good. I have found a show that meets your criteria.");
+                session.send("You can purchase it if you like: " + "***" + shows[i] + "***");
+                bot.dialog(shows[i], require('./'+shows[i]));
+                session.beginDialog(shows[i]);
             }
         }
 
         if (showFound == false){
-            var random = parseInt(Math.random() * (characteristics.length - 1)); session.send("I have not found any show that meets your criteria."); session.send("Alternatively, I may have found a show that could interest you. You can purchase it if you like: " + "***" + shows[random] + "***");
+            var random = parseInt(Math.random() * (characteristics.length - 1));
+            session.send("I have not found any show that meets your criteria.");
+            session.send("Alternatively, I may have found a show that could interest you. You can purchase it if you like: " + "***" + shows[random] + "***");
             bot.dialog(shows[random], require('./'+shows[random])); 
             session.beginDialog(shows[random]);
         }
@@ -81,14 +85,14 @@ var bot = new builder.UniversalBot(connector, [
 
 //Capture and process reservation
 function processSubmitAction(session, value) { var reply=value.reply;
-if (reply.toLowerCase()=="no"){
-session.send("We are sorry you didn't want to buy it. You can search for a different one!");
-} else if (reply.toLowerCase()=="yes"){
-session.send("Congratulations, you just bought it :)!");
-} else {
-session.send("Congratulations, you just bought season(s) " + reply + " :)!");
-}
-session.endDialog();
+    if (reply.toLowerCase()=="no"){
+        session.send("We are sorry you didn't want to buy it. You can search for a different one!");
+    } else if (reply.toLowerCase()=="yes"){
+        session.send("Congratulations, you just bought it :)!");
+    } else {
+        session.send("Congratulations, you just bought season(s) " + reply + " :)!");
+    }
+        session.endDialog();
 }
 
 
