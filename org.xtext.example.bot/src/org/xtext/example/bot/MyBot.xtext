@@ -1,0 +1,59 @@
+grammar org.xtext.example.bot.MyBot with org.eclipse.xtext.common.Terminals
+generate myBot "http://www.xtext.org/example/bot/MyBot"
+Bot:
+{Bot}
+'StartBot'
+shows+=Shows*
+state+=State*
+'EndBot'
+;
+Shows:
+'Show'
+'ShowType' showType+=ShowType
+'Genre' genre+=Genre
+'Language' language+=Language
+'Title' title+=Title
+'EndShow'
+;
+ShowType:
+name=ID
+;
+Genre:
+name=ID
+;
+Language:
+name=ID
+;
+
+Title:
+name=Text
+;
+State:
+'State' name=ID
+actionSay+=ActionSay
+(actionAsk+=ActionAsk)?
+(actionRecommend+=ActionRecommend)?
+'EndState'
+;
+ActionSay:
+'Say'
+text+=Text
+;
+ActionAsk:
+'Ask'
+text+=Text
+askVariable+=AskVariable
+;
+ActionRecommend:
+'Recommend'
+text+=Text
+(askRecommend+=AskRecommend)*
+;
+Text: name=STRING
+;
+AskVariable:
+name=ID
+;
+AskRecommend:
+name=ID
+;
