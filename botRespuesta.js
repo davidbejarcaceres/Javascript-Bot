@@ -84,7 +84,8 @@ var bot = new builder.UniversalBot(connector, [
 ])
 
 //Capture and process reservation
-function processSubmitAction(session, value) { var reply=value.reply;
+function processSubmitAction(session, value) {
+    var reply=value.reply;
     if (reply.toLowerCase()=="no"){
         session.send("We are sorry you didn't want to buy it. You can search for a different one!");
     } else if (reply.toLowerCase()=="yes"){

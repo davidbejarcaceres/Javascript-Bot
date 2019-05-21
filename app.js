@@ -13,7 +13,7 @@ characteristics[1] =  "movie" + "comedy" + "german";
 characteristics[2] =  "movie" + "drama" + "spanish";
 
 //Define the shows that match with the characteristics
-var shows=[]
+var shows= []
 shows[0] =  "True Detective";
 shows[1] =  "Feuchtgebiete";
 shows[2] =  "El laberinto del fauno";
@@ -73,7 +73,11 @@ var bot = new builder.UniversalBot(connector, [
 				showFound = true;
 				session.send("Good. I have found a show that meets your criteria.");
 				session.send("You can purchase it if you like: " + "***" + shows[i] + "***");
-				bot.dialog(shows[i], require('./'+shows[i]));
+				try {
+					bot.dialog(shows[i], require('./'+shows[i])); 
+				} catch (error) { // Already exist dialog
+					session.replaceDialog(shows[i], require('./'+shows[i]));
+				}
 		        session.beginDialog(shows[i]);
 		    }
 		}
@@ -82,7 +86,11 @@ var bot = new builder.UniversalBot(connector, [
 			var random = parseInt(Math.random() * (characteristics.length - 1));
 			session.send("Sorry, I have not found any show that meets your criteria");
 			session.send("Alternatively, I may have found a show that could interest you. You can purchase it if you like: " + "***" + shows[random] + "***");
-			bot.dialog(shows[random], require('./'+shows[random])); 
+			try {
+				bot.dialog(shows[random], require('./'+shows[random])); 
+			} catch (error) { // Already exist dialog
+				session.replaceDialog(shows[random], require('./'+shows[random]));				
+			}
 			session.beginDialog(shows[random]);
 		}
 
@@ -91,13 +99,15 @@ var bot = new builder.UniversalBot(connector, [
 ])
 
 //Capture and process reservation
-function processSubmitAction(session, value) { var reply=value.reply;
+function processSubmitAction(session, value) {
+	var reply=value.reply;
     if (reply.toLowerCase()=="no"){
         session.send("We are sorry you didn't want to buy it. You can search for a different one!");
     } else if (reply.toLowerCase()=="yes"){
         session.send("Congratulations, you just bought it :)!");
     } else {
         session.send("Congratulations, you just bought season(s) " + reply + " :)!");
-    }
+	}
+		session.cancelDialog();
         session.endDialog();
 }
